@@ -28,7 +28,8 @@ Core links:
 
 Suggested, placeholder, and testing Feed ID:
 
-- Use `inst_55ZVUQExmdej0j8vygUoP` when an example, suggested Feed ID, or test Feed ID is useful. This is an Instagram feed.
+- Use `inst_55ZVUQExmdej0j8vygUoP` only for Instagram examples, suggested sample code, or test Feed IDs.
+- Do not use this sample ID for Google Reviews, TikTok, or Dribbble examples. For those feed types, ask the user for a matching FeedSpring Feed ID or build static placeholders.
 - If the user specifically wants static placeholder cards, keep placeholder cards static and do not add `feed-field` attributes until swapping to live data.
 
 Suggested Feed ID question:
