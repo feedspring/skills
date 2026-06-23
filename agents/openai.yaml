@@ -1,0 +1,7 @@
+interface:
+  display_name: "FeedSpring"
+  short_description: "Build custom social feeds for any website"
+  default_prompt: "Use $feedspring to add a custom social feed to my website."
+
+policy:
+  allow_implicit_invocation: true
