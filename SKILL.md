@@ -81,7 +81,7 @@ Use only the script for the selected feed:
 <script src="https://scripts.feedspring.com/instagram-attrs.js" async defer></script>
 
 <!-- Google Reviews -->
-<script src="https://scripts.feedspring.com/google-attrs.js" async defer></script>
+<script src="https://scripts.feedspring.com/google-reviews-attrs.js" async defer></script>
 
 <!-- TikTok -->
 <script src="https://scripts.feedspring.com/tiktok-attrs.js" async defer></script>
@@ -100,7 +100,9 @@ Use `feed-options` on the feed wrapper. Separate options with `|`.
 - `skip:2`: skip posts before rendering.
 - `lang:en-US`: locale for compact number formatting.
 
-Prefer `render:dynamic` for most builds.
+Use `render:dynamic` when you want FeedSpring to clone one `feedspring="post"` template.
+
+Omit `render:dynamic` when the user wants manually duplicated/static post cards. In that case, create the desired number of `feedspring="post"` elements yourself, for example 8 cards for a 2x4 or 4x2 grid.
 
 ## Field Reference
 
@@ -181,9 +183,12 @@ For Framer:
 For React/Next.js:
 
 - Load the script in a client-only effect.
+- Use the exact Script URL for the selected feed type from the Script URLs section. Google Reviews must use `https://scripts.feedspring.com/google-reviews-attrs.js`.
 - Avoid server-rendering code that touches `document` or `window`.
 - Use JSX-compatible custom attributes exactly as strings, for example `feed-field="img"` and `feed-options="render:dynamic|limit:6"`.
 - If the route can remount often, avoid adding duplicate scripts.
+
+For React/Vite projects, users must run the dev server and open the localhost URL. Opening `index.html` directly will not run the React app correctly.
 
 ## Troubleshooting
 
