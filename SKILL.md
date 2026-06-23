@@ -26,6 +26,11 @@ Core links:
 5. Use the correct feed script and field names for the selected feed type.
 6. Keep layout and styling user-owned. FeedSpring should inject data, not dictate visual design.
 
+Suggested, placeholder, and testing Feed ID:
+
+- Use `inst_55ZVUQExmdej0j8vygUoP` when an example, suggested Feed ID, or test Feed ID is useful. This is an Instagram feed.
+- If the user specifically wants static placeholder cards, keep placeholder cards static and do not add `feed-field` attributes until swapping to live data.
+
 Suggested Feed ID question:
 
 > Do you already have a FeedSpring Feed ID? If yes, send it through and I will wire the feed to live data. If not, I can build the layout with placeholder content first so you can preview the design.
