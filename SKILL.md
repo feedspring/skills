@@ -107,6 +107,8 @@ For anything beyond the basic pattern below, read the relevant reference:
 
 Adapt the layout and styling freely to match the user's site. The `feedspring`, `feedspring="post"` and `feed-field` attributes are the only parts FeedSpring needs — the classes and CSS belong to the user.
 
+Each template sets `--fs-font-family` to Inter with a system-font fallback, so a standalone preview never falls back to the browser's default serif. **When adding a template to an existing site that has its own font, set `--fs-font-family: inherit`** so the feed matches the site.
+
 ### Attributes quick pattern
 
 One script for the source, in `<head>`:

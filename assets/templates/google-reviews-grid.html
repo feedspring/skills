@@ -9,7 +9,8 @@
   2. Replace the placeholder Feed ID on .fs-gr with your own (starts with google_)
   3. Replace YOUR_PLACE_ID in the two links with your Google Place ID
   4. Restyle freely. Colours, radius and spacing are CSS variables at the top of
-     the <style> block. The feedspring and feed-field attributes are the only
+     the <style> block, including --fs-font-family (set it to inherit to use
+     your site's font). The feedspring and feed-field attributes are the only
      parts FeedSpring needs — the classes and CSS are yours.
 
   STATIC RENDERING — READ THIS BEFORE CHANGING IT
@@ -201,6 +202,10 @@
 <style>
   .fs-gr {
     /* Design tokens — change these to restyle the whole feed */
+    /* Font — uses Inter if the page already has it, otherwise the system font.
+       Nothing is downloaded. Set to inherit to use your site's own font. */
+    --fs-font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
     --fs-text-primary: #141414;
     --fs-text-secondary: #444444;
     --fs-text-tertiary: #737373;
@@ -221,7 +226,7 @@
     max-width: 1140px;
     margin: 0 auto;
     padding: 0 16px;
-    font-family: inherit;
+    font-family: var(--fs-font-family);
     color: var(--fs-text-primary);
   }
 
