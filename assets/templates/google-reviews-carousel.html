@@ -1,0 +1,118 @@
+<!--
+  FeedSpring — Google Reviews carousel
+  Horizontally scrolling review cards with an aggregate rating header.
+
+  Setup:
+  1. Put the script in <head>
+  2. Replace the Feed ID on .fs-gr with your own (starts with google_)
+  3. Replace YOUR_PLACE_ID in the footer links with your Google Place ID
+
+  Stars are a repeater, not a value: FeedSpring clones feed-field="star" once
+  per rating point and feed-field="star-inactive" for the remainder. Keep both
+  SVGs in the markup — they are templates, not visible elements.
+
+  Google exposes no per-review URL, so there is no link field. The footer links
+  point at the business listing instead.
+
+  Review text length varies a lot. This card lets height flow rather than
+  clamping, so a short review doesn't leave a gap. Swap to -webkit-line-clamp
+  if you need uniform card heights.
+-->
+
+<script src="https://scripts.feedspring.com/google-reviews-attrs.js" async defer></script>
+
+<!-- FeedSpring demo feed — replace with your own Feed ID before publishing -->
+<section class="fs-gr" feedspring="google_YOUR-FEED-ID" feed-options="render:dynamic|limit:12">
+
+  <header class="fs-gr__header">
+    <p class="fs-gr__score">
+      <strong feed-field="average-rating"></strong> out of 5
+    </p>
+    <p class="fs-gr__count">
+      Based on <span feed-field="total"></span> Google reviews
+    </p>
+  </header>
+
+  <div class="fs-gr__track">
+    <article class="fs-gr__card" feedspring="post" style="display:none">
+
+      <div class="fs-gr__stars" aria-hidden="true">
+        <svg class="fs-gr__star" feed-field="star" viewBox="0 0 20 20" width="18" height="18">
+          <path fill="currentColor" d="M10 1.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L10 14.9l-5.3 2.7 1-5.8L1.5 7.7l5.9-.9z"/>
+        </svg>
+        <svg class="fs-gr__star fs-gr__star--off" feed-field="star-inactive" viewBox="0 0 20 20" width="18" height="18">
+          <path fill="currentColor" d="M10 1.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L10 14.9l-5.3 2.7 1-5.8L1.5 7.7l5.9-.9z"/>
+        </svg>
+      </div>
+
+      <p class="fs-gr__text" feed-field="review"></p>
+
+      <footer class="fs-gr__author">
+        <img class="fs-gr__avatar" feed-field="avatar" alt="" loading="lazy" />
+        <div>
+          <p class="fs-gr__name" feed-field="name"></p>
+          <time class="fs-gr__date" feed-field="timestamp" feed-timestamp="from-now"></time>
+        </div>
+      </footer>
+
+    </article>
+  </div>
+
+  <footer class="fs-gr__actions">
+    <a href="https://search.google.com/local/reviews?placeid=YOUR_PLACE_ID" target="_blank" rel="noopener">
+      Read all reviews on Google
+    </a>
+    <a href="https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID" target="_blank" rel="noopener">
+      Leave us a review
+    </a>
+  </footer>
+
+</section>
+
+<style>
+  .fs-gr { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  .fs-gr__header { text-align: center; margin-bottom: 24px; }
+  .fs-gr__score { margin: 0; font-size: 1.25rem; }
+  .fs-gr__score strong { font-size: 2rem; }
+  .fs-gr__count { margin: 4px 0 0; opacity: 0.6; font-size: 0.875rem; }
+
+  .fs-gr__track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 16px;
+    scrollbar-width: thin;
+  }
+
+  .fs-gr__card {
+    scroll-snap-align: start;
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .fs-gr__stars { display: flex; gap: 2px; color: #f5a623; }
+  .fs-gr__star--off { color: rgba(0, 0, 0, 0.15); }
+
+  .fs-gr__text { margin: 0; line-height: 1.55; font-size: 0.9375rem; }
+  .fs-gr__text:empty { display: none; }
+
+  .fs-gr__author { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 4px; }
+  .fs-gr__avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+  .fs-gr__name { margin: 0; font-weight: 600; font-size: 0.875rem; }
+  .fs-gr__date { font-size: 0.8125rem; opacity: 0.6; }
+
+  .fs-gr__actions { display: flex; justify-content: center; gap: 24px; margin-top: 20px; font-size: 0.875rem; }
+
+  @media (max-width: 560px) {
+    .fs-gr__card { flex-basis: 84%; }
+    .fs-gr__actions { flex-direction: column; align-items: center; gap: 8px; }
+  }
+</style>

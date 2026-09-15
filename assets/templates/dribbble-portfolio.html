@@ -1,0 +1,87 @@
+<!--
+  FeedSpring — Dribbble portfolio grid
+  Shot cards with titles and a designer profile header.
+
+  Setup:
+  1. Put the script in <head>
+  2. Replace the Feed ID on .fs-db with your own (starts with dribbble_)
+
+  Dribbble shots are 4:3. Keep the aspect-ratio on .fs-db__media or shots will
+  distort.
+
+  Note the follower field: Dribbble uses feed-field="followers", not
+  "follower-count" like Instagram and TikTok.
+
+  Dribbble exposes no like or view counts through FeedSpring.
+-->
+
+<script src="https://scripts.feedspring.com/dribbble-attrs.js" async defer></script>
+
+<!-- FeedSpring demo feed — replace with your own Feed ID before publishing -->
+<section class="fs-db" feedspring="dribbble_YOUR-FEED-ID" feed-options="render:dynamic|limit:9">
+
+  <header class="fs-db__header">
+    <img class="fs-db__avatar" feed-field="avatar" alt="" />
+    <div class="fs-db__identity">
+      <h2 class="fs-db__name" feed-field="name"></h2>
+      <p class="fs-db__bio" feed-field="bio"></p>
+      <p class="fs-db__meta">
+        <span feed-field="location"></span>
+        <a class="fs-db__profile" feed-field="profile-link" target="_blank" rel="noopener">
+          <span feed-field="followers"></span> followers on Dribbble
+        </a>
+      </p>
+    </div>
+  </header>
+
+  <div class="fs-db__grid">
+    <article class="fs-db__shot" feedspring="post" style="display:none">
+      <a class="fs-db__link" feed-field="link" target="_blank" rel="noopener">
+        <img class="fs-db__media" feed-field="img" alt="" loading="lazy" />
+      </a>
+      <div class="fs-db__caption">
+        <h3 class="fs-db__title" feed-field="title"></h3>
+        <time class="fs-db__date" feed-field="timestamp" feed-timestamp="MMM YYYY"></time>
+      </div>
+    </article>
+  </div>
+
+</section>
+
+<style>
+  .fs-db { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  .fs-db__header { display: flex; gap: 16px; margin-bottom: 32px; }
+  .fs-db__avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex: none; }
+  .fs-db__identity { min-width: 0; }
+  .fs-db__name { margin: 0; font-size: 1.25rem; }
+  .fs-db__bio { margin: 4px 0 0; opacity: 0.7; font-size: 0.9375rem; line-height: 1.5; }
+  .fs-db__meta { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.875rem; opacity: 0.6; }
+  .fs-db__profile { color: inherit; }
+
+  .fs-db__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+  .fs-db__shot { display: flex; flex-direction: column; gap: 10px; }
+
+  .fs-db__link { display: block; border-radius: 12px; overflow: hidden; }
+  .fs-db__link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+  .fs-db__media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .fs-db__link:hover .fs-db__media { transform: scale(1.03); }
+
+  .fs-db__caption { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .fs-db__title { margin: 0; font-size: 0.9375rem; font-weight: 600; }
+  .fs-db__date { font-size: 0.8125rem; opacity: 0.55; flex: none; }
+
+  @media (max-width: 900px) { .fs-db__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+  @media (max-width: 560px) {
+    .fs-db__grid { grid-template-columns: 1fr; }
+    .fs-db__header { flex-direction: column; }
+  }
+</style>

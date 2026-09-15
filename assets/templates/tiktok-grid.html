@@ -1,0 +1,98 @@
+<!--
+  FeedSpring — TikTok video grid
+  Thumbnail cards linking out to TikTok, with view counts and a verified badge.
+
+  Setup:
+  1. Put the script in <head>
+  2. Replace the Feed ID on .fs-tt with your own (starts with tiktok_)
+
+  TikTok videos are always 9:16 portrait. Cropping to square or landscape looks
+  wrong — keep the aspect-ratio on .fs-tt__media.
+
+  This template links out rather than embedding. Inline playback is available
+  via feed-field="video" on an <iframe>, but it loads TikTok's embed player,
+  which is heavy. Only use it when playback in-page is genuinely needed.
+
+  feed-field="verified" is a gate, not a value: the element stays in the DOM
+  for verified accounts and is removed entirely for unverified ones.
+-->
+
+<script src="https://scripts.feedspring.com/tiktok-attrs.js" async defer></script>
+
+<!-- FeedSpring demo feed — replace with your own Feed ID before publishing -->
+<section class="fs-tt" feedspring="tiktok_YOUR-FEED-ID" feed-options="render:dynamic|limit:8">
+
+  <header class="fs-tt__header">
+    <img class="fs-tt__avatar" feed-field="avatar" alt="" />
+    <div>
+      <p class="fs-tt__name">
+        <span feed-field="name"></span>
+        <svg class="fs-tt__verified" feed-field="verified" viewBox="0 0 20 20" width="16" height="16" aria-label="Verified">
+          <path fill="#20d5ec" d="M10 1l2.3 1.7 2.8-.3 1 2.7 2.4 1.5-1 2.7 1 2.7-2.4 1.5-1 2.7-2.8-.3L10 19l-2.3-1.7-2.8.3-1-2.7L1.5 13.3l1-2.7-1-2.7 2.4-1.5 1-2.7 2.8.3z"/>
+          <path fill="#fff" d="M8.8 12.9L6 10.1l1.2-1.2 1.6 1.6 4-4L14 7.7z"/>
+        </svg>
+      </p>
+      <a class="fs-tt__profile" feed-field="profile-link" target="_blank" rel="noopener">
+        <span feed-field="follower-count"></span> followers
+      </a>
+    </div>
+  </header>
+
+  <div class="fs-tt__grid">
+    <article class="fs-tt__card" feedspring="post" style="display:none">
+      <div class="fs-tt__media-wrap">
+        <img class="fs-tt__media" feed-field="img" alt="" loading="lazy" />
+        <span class="fs-tt__views"><span feed-field="view-count"></span> views</span>
+      </div>
+      <p class="fs-tt__title" feed-field="description"></p>
+      <a class="fs-tt__link" feed-field="link" target="_blank" rel="noopener" aria-label="Watch on TikTok"></a>
+    </article>
+  </div>
+
+</section>
+
+<style>
+  .fs-tt { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  .fs-tt__header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .fs-tt__avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+  .fs-tt__name { margin: 0; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .fs-tt__verified { flex: none; }
+  .fs-tt__profile { font-size: 0.875rem; opacity: 0.6; text-decoration: none; }
+  .fs-tt__profile:hover { text-decoration: underline; }
+
+  .fs-tt__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  .fs-tt__card { position: relative; display: flex; flex-direction: column; gap: 8px; }
+
+  .fs-tt__media-wrap { position: relative; border-radius: 12px; overflow: hidden; }
+  .fs-tt__media { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
+
+  .fs-tt__views {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .fs-tt__title {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .fs-tt__link { position: absolute; inset: 0; }
+  .fs-tt__link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 12px; }
+
+  @media (max-width: 900px) { .fs-tt__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .fs-tt__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+</style>

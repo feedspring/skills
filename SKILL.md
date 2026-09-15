@@ -70,6 +70,8 @@ Use these when the user has no Feed ID yet. They are real, live FeedSpring feeds
 | TikTok | `TODO — awaiting demo feed ID` |
 | Dribbble | `TODO — awaiting demo feed ID` |
 
+Demo feed content identifies itself as FeedSpring demo content, so a site accidentally published with one is obvious rather than silently wrong. Mention that to the user — it reassures them the content isn't meant to be theirs.
+
 When you use a demo feed you **must**:
 
 1. Leave an HTML comment directly above the wrapper: `<!-- FeedSpring demo feed — replace with your own Feed ID before publishing -->`
@@ -88,6 +90,19 @@ For anything beyond the basic pattern below, read the relevant reference:
 - `references/attributes.md` — every option, rendering modes, loading states, gotchas
 - `references/graphql-api.md` — endpoint, queries, images, errors
 - `references/feed-fields.md` — every field, for every source
+
+### Start from a template
+
+`assets/templates/` holds tested, responsive starting layouts. Read the relevant one and adapt it rather than writing markup from scratch — the field names, element types and aspect ratios are already correct, and each file's header comment explains the source-specific traps.
+
+| Source | Template |
+|---|---|
+| Instagram | `assets/templates/instagram-grid.html` |
+| Google Reviews | `assets/templates/google-reviews-carousel.html` |
+| TikTok | `assets/templates/tiktok-grid.html` |
+| Dribbble | `assets/templates/dribbble-portfolio.html` |
+
+Adapt the layout and styling freely to match the user's site. The `feedspring`, `feedspring="post"` and `feed-field` attributes are the only parts FeedSpring needs — the classes and CSS belong to the user.
 
 ### Attributes quick pattern
 
