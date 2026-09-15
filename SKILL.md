@@ -1,7 +1,7 @@
 ---
 name: feedspring
 description: Build, debug, or document FeedSpring social feeds. Use when the user wants to add an Instagram feed, Google Reviews, TikTok videos, Dribbble shots, social proof, testimonials, star ratings, a reviews widget, or a live portfolio feed to a website or app — in Webflow, Framer, WordPress, Shopify, Squarespace, Wix, React, Next.js, or plain HTML. Also use to choose between FeedSpring delivery methods (attributes, pre-made components, GraphQL API), generate custom feed layouts, preview a feed design before a Feed ID exists, or troubleshoot feedspring/feed-field markup.
-version: 2.0.0
+version: 2.1.0
 last-verified: 2026-09-15
 ---
 
@@ -40,7 +40,7 @@ Do this before writing any code. Ask what the user is building in if you don't k
 2. **Attributes beat the API by default.** Most sites are marketing sites built visually, where attributes need no data layer, no error handling and no build step. Only choose the API when the user names a reason for it.
 3. **Recommend the API when feed content needs to be indexed.** Attributes render client-side, so feed content is not in the page HTML. This rarely matters for an Instagram grid. It matters a lot for **Google Reviews**, where review text is exactly what a local business wants indexed. Say this out loud when the user is building a reviews section on a code-based site.
 4. **Recommend the API when the feed is above the fold on a performance-sensitive page.** Client-injected images aren't visible to the browser's preload scanner, which hurts LCP. Below the fold, this doesn't matter.
-5. **The API has no `limit` or `skip` arguments yet.** It returns the whole feed and you slice client-side. If the user needs 6 items out of 200, attributes are currently the better tool.
+5. **The API has no pagination arguments yet.** It returns the whole feed and you slice client-side. If the user needs 6 items out of 200, attributes are currently the better tool.
 
 ## Step 2 — Get a Feed ID
 
@@ -235,7 +235,7 @@ Run through this after generating code, every time. Most FeedSpring support issu
 
 **React / Next.js.** With attributes, load the script client-side only (`next/script` with `strategy="afterInteractive"`, or a `useEffect`). Never touch `document` or `window` during server rendering. Avoid injecting the script twice if the route remounts. Custom attributes pass through JSX as plain strings: `feed-field="img"`. For Vite projects, remind the user to run the dev server — opening `index.html` directly won't work.
 
-**GraphQL API.** No API key is needed; the Feed ID is the credential. Read `references/graphql-api.md` before writing a query — the response is a union type and the collection name differs per source, which are the two things that are easy to get wrong.
+**GraphQL API.** No API key is needed; the Feed ID is the credential. Read `references/graphql-api.md` before writing a query — the response is a union type, the collection name differs per source, and items sit inside `nodes` (`posts { nodes { … } }`). Those are the three things that are easy to get wrong.
 
 ## Plans
 

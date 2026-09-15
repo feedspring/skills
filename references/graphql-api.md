@@ -1,6 +1,6 @@
 # FeedSpring GraphQL API
 
-Read this before writing a query. Two things are easy to get wrong and both fail loudly: the response is a **union type**, and the **collection name differs per source**.
+Read this before writing a query. Three things are easy to get wrong and all fail loudly: the response is a **union type**, the **collection name differs per source**, and **every collection wraps its items in `nodes`**.
 
 Endpoint: `https://api.feedspring.com/graphql` — POST only, `Content-Type: application/json`.
 
@@ -21,12 +21,25 @@ Attributes are the default for most sites. Reach for the API when the user needs
 
 `feed(publicKey:)` returns a union. Always select `__typename` and use an inline fragment for the source:
 
-| Source | GraphQL type | Collection field |
+| Source | GraphQL type | Items are at |
 |---|---|---|
-| Instagram | `InstagramFeedData` | `posts` |
-| TikTok | `TikTokFeedData` | `videos` |
-| Dribbble | `DribbbleFeedData` | `shots` |
-| Google Reviews | `GoogleReviewsFeedData` | `reviews` |
+| Instagram | `InstagramFeedData` | `posts.nodes` |
+| TikTok | `TikTokFeedData` | `videos.nodes` |
+| Dribbble | `DribbbleFeedData` | `shots.nodes` |
+| Google Reviews | `GoogleReviewsFeedData` | `reviews.nodes` |
+
+## Collections wrap their items in `nodes`
+
+Each collection is a connection object, not a plain list. Select the item fields inside `nodes`:
+
+```graphql
+posts { nodes { id caption } }   # correct
+posts { id caption }             # fails: Cannot query field "id" on type "InstagramPostConnection"
+```
+
+In code, read the array from `nodes`: `feed.posts.nodes`, `feed.reviews.nodes`. The wrapper is there so pagination can be added later.
+
+Only the four top-level collections are wrapped. Instagram's `children` (carousel media) and Dribbble's `tags` are plain lists.
 
 ## Images are objects, not strings
 
@@ -62,15 +75,17 @@ query InstagramFeed($publicKey: String!) {
         avatar { url(input: { width: 160, height: 160 }) }
       }
       posts {
-        id
-        caption
-        url
-        mediaType
-        likeCount
-        commentCount
-        publishedAt
-        image { url(input: { width: 1200 }) }
-        children { id mediaType image { url(input: { width: 1200 }) } }
+        nodes {
+          id
+          caption
+          url
+          mediaType
+          likeCount
+          commentCount
+          publishedAt
+          image { url(input: { width: 1200 }) }
+          children { id mediaType image { url(input: { width: 1200 }) } }
+        }
       }
     }
   }
@@ -96,18 +111,20 @@ query TikTokFeed($publicKey: String!) {
         avatar { url(input: { width: 160, height: 160 }) }
       }
       videos {
-        id
-        url
-        embedUrl
-        title
-        description
-        viewCount
-        likeCount
-        commentCount
-        shareCount
-        durationSeconds
-        publishedAt
-        cover { url(input: { width: 800 }) }
+        nodes {
+          id
+          url
+          embedUrl
+          title
+          description
+          viewCount
+          likeCount
+          commentCount
+          shareCount
+          durationSeconds
+          publishedAt
+          cover { url(input: { width: 800 }) }
+        }
       }
     }
   }
@@ -136,13 +153,15 @@ query DribbbleFeed($publicKey: String!) {
         avatar { url(input: { width: 160, height: 160 }) }
       }
       shots {
-        id
-        url
-        title
-        tags
-        publishedAt
-        image { url(input: { width: 1200 }) }
-        team { name url }
+        nodes {
+          id
+          url
+          title
+          tags
+          publishedAt
+          image { url(input: { width: 1200 }) }
+          team { name url }
+        }
       }
     }
   }
@@ -163,16 +182,18 @@ query GoogleReviewsFeed($publicKey: String!) {
       reviewCount
       averageRating
       reviews {
-        id
-        comment
-        createdAt
-        rating { value label }
-        author {
-          name
-          isAnonymous
-          photo { url(input: { width: 128, height: 128 }) }
+        nodes {
+          id
+          comment
+          createdAt
+          rating { value label }
+          author {
+            name
+            isAnonymous
+            photo { url(input: { width: 128, height: 128 }) }
+          }
+          reply { comment updatedAt }
         }
-        reply { comment updatedAt }
       }
     }
   }
@@ -185,11 +206,13 @@ query GoogleReviewsFeed($publicKey: String!) {
 
 ## Limits and errors
 
-There are **no `limit` or `skip` arguments**. The whole collection comes back; slice it client-side:
+The collections currently take **no pagination arguments**. The whole collection comes back; slice it client-side:
 
 ```js
-const visible = feed.posts.slice(0, 6)
+const visible = feed.posts.nodes.slice(0, 6)
 ```
+
+The `nodes` wrapper exists so pagination can be added. Check the schema before assuming arguments are still unavailable.
 
 If the user needs a small number of items out of a large feed, attributes are currently the better tool.
 
@@ -242,7 +265,7 @@ async function getFeed(publicKey) {
           feed(publicKey: $publicKey) {
             __typename
             ... on InstagramFeedData {
-              posts { id caption url image { url(input: { width: 800 }) } }
+              posts { nodes { id caption url image { url(input: { width: 800 }) } } }
             }
           }
         }
@@ -261,7 +284,7 @@ export default async function InstagramGrid() {
 
   return (
     <div className="grid">
-      {feed.posts.slice(0, 8).map((post) => (
+      {feed.posts.nodes.slice(0, 8).map((post) => (
         <a key={post.id} href={post.url} target="_blank" rel="noopener noreferrer">
           <img src={post.image?.url} alt="" />
           <p>{post.caption}</p>
