@@ -1,16 +1,22 @@
 <!--
   FeedSpring — Dribbble portfolio grid
-  Shot cards with titles and a designer profile header.
+  Mirrors the Dribbble "Card Grid" component: a pill-shaped designer header with
+  a Follow button, above a grid of shots that reveal the Dribbble logo on hover.
 
   Setup:
   1. Put the script in <head>
   2. Replace the placeholder Feed ID on .fs-db with your own (starts with dribbble_)
+  3. Restyle freely. Colours, radius and spacing are CSS variables at the top of
+     the <style> block. The feedspring and feed-field attributes are the only
+     parts FeedSpring needs — the classes and CSS are yours.
 
-  Dribbble shots are 4:3. Keep the aspect-ratio on .fs-db__media or shots will
-  distort.
+  Dribbble shots are 4:3. Keep --fs-db-ratio at 4 / 3 or shots will be cropped.
 
-  Note the follower field: Dribbble uses feed-field="followers", not
+  The follower field is feed-field="followers" on Dribbble, not
   "follower-count" like Instagram and TikTok.
+
+  Each shot's title is placed inside its link as visually hidden text, so the
+  link has a meaningful name for screen readers without showing on the card.
 
   Dribbble exposes no like or view counts through FeedSpring.
 -->
@@ -21,67 +27,203 @@
 <section class="fs-db" feedspring="dribbble_3qm4sGbu4uWQI2asUboPC" feed-options="render:dynamic|limit:9">
 
   <header class="fs-db__header">
-    <img class="fs-db__avatar" feed-field="avatar" alt="" />
     <div class="fs-db__identity">
-      <h2 class="fs-db__name" feed-field="name"></h2>
-      <p class="fs-db__bio" feed-field="bio"></p>
-      <p class="fs-db__meta">
-        <span feed-field="location"></span>
-        <a class="fs-db__profile" feed-field="profile-link" target="_blank" rel="noopener">
-          <span feed-field="followers"></span> followers on Dribbble
-        </a>
-      </p>
+      <img class="fs-db__avatar" feed-field="avatar" alt="" />
+      <div>
+        <p class="fs-db__name" feed-field="name"></p>
+        <p class="fs-db__followers"><span feed-field="followers"></span> Followers</p>
+      </div>
     </div>
+
+    <span class="fs-db__divider" aria-hidden="true"></span>
+
+    <p class="fs-db__bio" feed-field="bio"></p>
+
+    <a class="fs-db__follow" feed-field="profile-link" target="_blank" rel="noopener">
+      <svg width="24" height="24" viewBox="1 1 22 22" aria-hidden="true">
+        <path fill="#FFFFFF" d="M12 3.59766C16.6407 3.59766 20.3954 7.35234 20.3954 11.9859C20.3954 16.6195 16.6407 20.3812 12 20.3812C7.35942 20.3812 3.60474 16.6266 3.60474 11.993C3.60474 7.35938 7.35942 3.59766 12 3.59766Z" />
+        <path fill="#EA4C89" d="M12 20.9789C7.03594 20.9789 3 16.95 3 11.993C3 7.02891 7.03594 3 12 3C16.9641 3 21 7.02891 21 11.9859C21 16.943 16.9641 20.9789 12 20.9789ZM19.5867 13.2164C19.3266 13.132 17.2102 12.5063 14.7984 12.8859C15.8039 15.6422 16.2117 17.8922 16.2891 18.3562C18.0188 17.1961 19.2492 15.3539 19.5867 13.2164ZM15.0023 19.0664C14.8898 18.3914 14.4398 16.043 13.3641 13.2445C13.35 13.2516 13.3289 13.2586 13.3148 13.2586C8.97656 14.7703 7.42266 17.7727 7.28203 18.0539C8.58281 19.0664 10.2211 19.6711 12 19.6711C13.0617 19.6781 14.0812 19.4602 15.0023 19.0664ZM6.29062 17.1328C6.46641 16.8375 8.57578 13.35 12.5414 12.0633C12.6398 12.0281 12.7453 12 12.8438 11.9719C12.6539 11.5359 12.443 11.1 12.218 10.6711C8.37891 11.8172 4.65234 11.768 4.31484 11.7609C4.31484 11.8383 4.30781 11.9156 4.30781 11.993C4.31484 13.9688 5.06016 15.7688 6.29062 17.1328ZM4.47656 10.425C4.82109 10.432 7.98516 10.4461 11.5852 9.48984C10.3125 7.22578 8.93437 5.32734 8.7375 5.05313C6.57891 6.06563 4.97578 8.04844 4.47656 10.425ZM10.2 4.53281C10.4109 4.81406 11.8102 6.7125 13.0687 9.02578C15.8039 7.99922 16.957 6.45234 17.0977 6.25547C15.7406 5.05312 13.9547 4.32187 12 4.32187C11.3812 4.32187 10.7766 4.39922 10.2 4.53281ZM17.9484 7.14141C17.7867 7.35938 16.5 9.01172 13.6594 10.1719C13.8352 10.5375 14.0109 10.9102 14.1727 11.2828C14.2289 11.4164 14.2852 11.55 14.3414 11.6766C16.9008 11.3531 19.4391 11.8734 19.6922 11.9227C19.6711 10.1156 19.0242 8.44922 17.9484 7.14141Z" />
+      </svg>
+      Follow
+    </a>
   </header>
 
   <div class="fs-db__grid">
-    <article class="fs-db__shot" feedspring="post" style="display:none">
-      <a class="fs-db__link" feed-field="link" target="_blank" rel="noopener">
-        <img class="fs-db__media" feed-field="img" alt="" loading="lazy" />
+    <article class="fs-db__card" feedspring="post" style="display:none">
+      <img class="fs-db__image" feed-field="img" alt="" loading="lazy" />
+      <a class="fs-db__overlay" feed-field="link" target="_blank" rel="noopener">
+        <svg width="26" height="26" viewBox="4 4 56 56" aria-hidden="true">
+          <path fill="currentColor" d="M48.2737 31.1286C48.1067 27.9222 46.9915 24.8375 45.0694 22.2655C44.4838 22.8962 43.8578 23.4882 43.1953 24.0377C41.1602 25.7281 38.8859 27.1079 36.4466 28.1322C36.7868 28.8451 37.0985 29.5357 37.3735 30.1875V30.1936C37.4511 30.3758 37.5258 30.5591 37.5975 30.7436C40.6816 30.3974 43.9327 30.5236 47.084 30.9494C47.5037 31.0064 47.8988 31.0675 48.2737 31.1286V31.1286ZM29.1561 15.9527C31.1412 18.7499 32.9719 21.6536 34.6398 24.6509C37.1311 23.669 39.1905 22.4305 40.8487 21.0514C41.4242 20.5771 41.966 20.0632 42.4701 19.5135C39.5388 17.0481 35.83 15.6988 31.9998 15.7042C31.0465 15.7036 30.095 15.786 29.1561 15.9507V15.9527ZM16.2188 27.9203C17.6065 27.8853 18.9926 27.8017 20.3744 27.6698C23.7144 27.371 27.0259 26.8112 30.2785 25.9953C28.5786 23.042 26.7433 20.1688 24.7785 17.3848C22.6797 18.4245 20.8292 19.9034 19.3523 21.7212C17.8754 23.539 16.8068 25.6532 16.2188 27.9203ZM19.3355 42.257C20.1259 41.102 21.1648 39.8024 22.5438 38.3886C25.5057 35.3535 29.0012 32.9905 33.0468 31.6868L33.1731 31.6501C32.837 30.9086 32.5213 30.2466 32.2035 29.6233C28.4635 30.7131 24.5238 31.3935 20.5985 31.7459C18.6837 31.919 16.9664 31.9944 15.7035 32.0066C15.6999 35.7397 16.9833 39.3598 19.3375 42.257H19.3355ZM38.1211 47.1051C37.3355 43.1436 36.2236 39.2539 34.7966 35.4757C30.7185 36.9566 27.4694 39.122 24.9577 41.7049C23.9441 42.7283 23.0446 43.8587 22.275 45.0762C25.0836 47.1719 28.4954 48.3018 31.9998 48.2968C34.0977 48.2998 36.1764 47.8965 38.1211 47.1092V47.1051ZM41.9364 44.9153C45.1168 42.4704 47.2833 38.9381 48.0211 34.9949C47.3285 34.8218 46.4505 34.6486 45.485 34.5142C43.3382 34.2051 41.1599 34.1825 39.0072 34.447C40.2193 37.8668 41.198 41.365 41.9364 44.9174V44.9153ZM31.9998 52.3709C20.7492 52.3709 11.6294 43.2511 11.6294 32.0005C11.6294 20.7499 20.7492 11.6301 31.9998 11.6301C43.2503 11.6301 52.3701 20.7499 52.3701 32.0005C52.3701 43.2511 43.2503 52.3709 31.9998 52.3709Z" />
+        </svg>
+        <span class="fs-db__sr" feed-field="title"></span>
       </a>
-      <div class="fs-db__caption">
-        <h3 class="fs-db__title" feed-field="title"></h3>
-        <time class="fs-db__date" feed-field="timestamp" feed-timestamp="MMM YYYY"></time>
-      </div>
     </article>
   </div>
 
 </section>
 
 <style>
-  .fs-db { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  .fs-db {
+    /* Design tokens — change these to restyle the whole feed */
+    --fs-text-primary: #141414;
+    --fs-text-secondary: #444444;
+    --fs-text-inverse: #ffffff;
+    --fs-border-secondary: #ebebeb;
+    --fs-background-overlay: rgba(20, 20, 20, 0.6);
+    --fs-dribbble-pink: #ea4c89;
 
-  .fs-db__header { display: flex; gap: 16px; margin-bottom: 32px; }
-  .fs-db__avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex: none; }
-  .fs-db__identity { min-width: 0; }
-  .fs-db__name { margin: 0; font-size: 1.25rem; }
-  .fs-db__bio { margin: 4px 0 0; opacity: 0.7; font-size: 0.9375rem; line-height: 1.5; }
-  .fs-db__meta { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.875rem; opacity: 0.6; }
-  .fs-db__profile { color: inherit; }
+    --fs-db-columns: 3;
+    --fs-db-gap: 24px;
+    --fs-db-radius: 28px;
+    --fs-db-ratio: 4 / 3;
 
-  .fs-db__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-
-  .fs-db__shot { display: flex; flex-direction: column; gap: 10px; }
-
-  .fs-db__link { display: block; border-radius: 12px; overflow: hidden; }
-  .fs-db__link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-
-  .fs-db__media {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 16px;
+    font-family: inherit;
+    color: var(--fs-text-primary);
   }
-  .fs-db__link:hover .fs-db__media { transform: scale(1.03); }
 
-  .fs-db__caption { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-  .fs-db__title { margin: 0; font-size: 0.9375rem; font-weight: 600; }
-  .fs-db__date { font-size: 0.8125rem; opacity: 0.55; flex: none; }
+  .fs-db *,
+  .fs-db *::before,
+  .fs-db *::after { box-sizing: border-box; }
 
-  @media (max-width: 900px) { .fs-db__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+  .fs-db p { margin: 0; }
+
+  .fs-db__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Designer header */
+  .fs-db__header {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 32px;
+    padding: 24px;
+    border: 1px solid var(--fs-border-secondary);
+    border-radius: 88px;
+  }
+
+  .fs-db__identity { display: flex; align-items: center; gap: 16px; flex: none; }
+
+  .fs-db__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--fs-border-secondary);
+  }
+
+  .fs-db__name { font-size: 18px; line-height: 32px; font-weight: 600; }
+  .fs-db__followers { font-size: 16px; line-height: 24px; color: var(--fs-text-secondary); }
+  /* FeedSpring leaves a count blank when it is 0 — hide the label with it */
+  .fs-db__followers:has(> [feed-field]:empty) { display: none; }
+
+  .fs-db__divider { flex: none; width: 1px; height: 40px; background: var(--fs-border-secondary); }
+
+  .fs-db__bio {
+    flex: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    max-width: 440px;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+    color: var(--fs-text-secondary);
+  }
+
+  .fs-db__follow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    margin-left: auto;
+    padding: 13px 16px;
+    border-radius: 48px;
+    background: var(--fs-dribbble-pink);
+    color: var(--fs-text-inverse);
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+  .fs-db__follow:hover { opacity: 0.85; }
+
+  /* Shot grid */
+  .fs-db__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--fs-db-columns), 1fr);
+    gap: var(--fs-db-gap);
+  }
+
+  .fs-db__card {
+    position: relative;
+    display: flex;
+    aspect-ratio: var(--fs-db-ratio);
+    overflow: hidden;
+    border-radius: var(--fs-db-radius);
+    background: var(--fs-border-secondary);
+  }
+
+  .fs-db__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+
+  .fs-db__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fs-background-overlay);
+    color: var(--fs-text-inverse);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  /* Hover and keyboard focus reveal the overlay and zoom the image */
+  .fs-db__card:hover .fs-db__overlay,
+  .fs-db__card:focus-within .fs-db__overlay { opacity: 1; }
+  .fs-db__card:hover .fs-db__image,
+  .fs-db__card:focus-within .fs-db__image { transform: scale(1.1); }
+  .fs-db__overlay:focus-visible { outline: 3px solid var(--fs-text-inverse); outline-offset: -6px; border-radius: var(--fs-db-radius); }
+  .fs-db__follow:focus-visible { outline: 2px solid var(--fs-dribbble-pink); outline-offset: 3px; }
+
+  @media (max-width: 900px) {
+    .fs-db { --fs-db-columns: 2; --fs-db-gap: 16px; }
+    .fs-db__header {
+      flex-direction: column;
+      gap: 20px;
+      border-radius: 32px;
+      text-align: center;
+    }
+    .fs-db__identity { flex-direction: column; gap: 12px; }
+    .fs-db__divider { width: 90%; height: 1px; }
+    .fs-db__bio { flex: none; }
+    .fs-db__follow { margin-left: 0; }
+  }
+
   @media (max-width: 560px) {
-    .fs-db__grid { grid-template-columns: 1fr; }
-    .fs-db__header { flex-direction: column; }
+    .fs-db { --fs-db-columns: 1; --fs-db-radius: 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fs-db__image, .fs-db__overlay, .fs-db__follow { transition: none; }
+    .fs-db__card:hover .fs-db__image,
+    .fs-db__card:focus-within .fs-db__image { transform: none; }
   }
 </style>

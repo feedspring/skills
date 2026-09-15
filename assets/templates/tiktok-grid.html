@@ -1,20 +1,28 @@
 <!--
   FeedSpring — TikTok video grid
-  Thumbnail cards linking out to TikTok, with view counts and a verified badge.
+  Mirrors the TikTok "Grid Basic" component: portrait video thumbnails with the
+  TikTok logo and view, like and share counts, linking out to TikTok.
 
   Setup:
   1. Put the script in <head>
   2. Replace the placeholder Feed ID on .fs-tt with your own (starts with tiktok_)
+  3. Restyle freely. Colours, radius and spacing are CSS variables at the top of
+     the <style> block. The feedspring and feed-field attributes are the only
+     parts FeedSpring needs — the classes and CSS are yours.
 
   TikTok videos are always 9:16 portrait. Cropping to square or landscape looks
-  wrong — keep the aspect-ratio on .fs-tt__media.
+  wrong — keep --fs-tt-ratio at 9 / 16.
+
+  The link wraps the whole card. It sits inside the feedspring="post" element
+  rather than being the post element itself, because FeedSpring only fills
+  fields inside the post template.
 
   This template links out rather than embedding. Inline playback is available
   via feed-field="video" on an <iframe>, but it loads TikTok's embed player,
   which is heavy. Only use it when playback in-page is genuinely needed.
 
-  feed-field="verified" is a gate, not a value: the element stays in the DOM
-  for verified accounts and is removed entirely for unverified ones.
+  share-count is a plain number; view-count and like-count are abbreviated
+  (1.2K). On narrow screens the share badge is hidden to keep the row tidy.
 -->
 
 <script src="https://scripts.feedspring.com/tiktok-attrs.js" async defer></script>
@@ -22,77 +30,158 @@
 <!-- Placeholder Feed ID — replace with your own FeedSpring Feed ID before publishing -->
 <section class="fs-tt" feedspring="tiktok_7ZTDgAmbdnLstuHJ2srlq" feed-options="render:dynamic|limit:8">
 
-  <header class="fs-tt__header">
-    <img class="fs-tt__avatar" feed-field="avatar" alt="" />
-    <div>
-      <p class="fs-tt__name">
-        <span feed-field="name"></span>
-        <svg class="fs-tt__verified" feed-field="verified" viewBox="0 0 20 20" width="16" height="16" aria-label="Verified">
-          <path fill="#20d5ec" d="M10 1l2.3 1.7 2.8-.3 1 2.7 2.4 1.5-1 2.7 1 2.7-2.4 1.5-1 2.7-2.8-.3L10 19l-2.3-1.7-2.8.3-1-2.7L1.5 13.3l1-2.7-1-2.7 2.4-1.5 1-2.7 2.8.3z"/>
-          <path fill="#fff" d="M8.8 12.9L6 10.1l1.2-1.2 1.6 1.6 4-4L14 7.7z"/>
-        </svg>
-      </p>
-      <a class="fs-tt__profile" feed-field="profile-link" target="_blank" rel="noopener">
-        <span feed-field="follower-count"></span> followers
-      </a>
-    </div>
-  </header>
-
   <div class="fs-tt__grid">
-    <article class="fs-tt__card" feedspring="post" style="display:none">
-      <div class="fs-tt__media-wrap">
-        <img class="fs-tt__media" feed-field="img" alt="" loading="lazy" />
-        <span class="fs-tt__views"><span feed-field="view-count"></span> views</span>
-      </div>
-      <p class="fs-tt__title" feed-field="description"></p>
-      <a class="fs-tt__link" feed-field="link" target="_blank" rel="noopener" aria-label="Watch on TikTok"></a>
+    <article class="fs-tt__item" feedspring="post" style="display:none">
+      <a class="fs-tt__card" feed-field="link" target="_blank" rel="noopener" aria-label="Watch on TikTok">
+        <img class="fs-tt__image" feed-field="img" alt="" loading="lazy" />
+
+        <svg class="fs-tt__logo" viewBox="0 0 24 24" aria-hidden="true"><use href="#fs-tt-logo" /></svg>
+
+        <span class="fs-tt__badges">
+          <span class="fs-tt__badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#fs-tt-play" /></svg>
+            <span feed-field="view-count"></span>
+          </span>
+          <span class="fs-tt__badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#fs-tt-heart" /></svg>
+            <span feed-field="like-count"></span>
+          </span>
+          <span class="fs-tt__badge fs-tt__badge--share">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#fs-tt-share" /></svg>
+            <span feed-field="share-count"></span>
+          </span>
+        </span>
+      </a>
     </article>
   </div>
+
+  <!-- Icons defined once, reused above with <use> -->
+  <svg class="fs-tt__sprite" aria-hidden="true">
+    <symbol id="fs-tt-logo" viewBox="0 0 24 24">
+      <path fill="#25F4EE" d="M9.46672591 9.32428772c.24636.00355228.49212.02467228.73547999.06325228l-.00018.70152c-1.05119999.02292-2.07335999.34986-2.94293999.94122-.86964.59142-1.549632 1.42206-1.957884 2.3916-.408246.9696-.527316 2.0367-.342828 3.07248.184488 1.03578.664638 1.99602 1.382532 2.76474-1.957644-1.3629-2.80305-3.84084-2.086842-6.11712s2.827662-3.82272 5.212662-3.81769228ZM14.9309259 3c-.00234.25248.01884.504624.06318.753186h-2.17182V15.64848c-.05838 1.33302-1.15446 2.38416-2.4879 2.38596-.39299999-.00174-.77999999-.09636-1.12949999-.27624-.3495-.17982-.65154-.4398-.88158-.75864.3549.18552.74874.28404 1.14912.28746 1.33985999-.00216 2.43851999-1.06344 2.48789999-2.40318V3Zm1.87314 3.44958c.6657.44268 1.44726.67872 2.24652.67836v.6612c-.87438-.1905-1.66296-.66072-2.24652-1.33956Z" />
+      <path fill="#FE2C55" d="M19.0506459 7.78914c.28338.06018.57216.09096.86184.0918v2.96118c-1.4796.00252-2.92266-.46002-4.12542-1.32234v6.02544c-.00024 1.0959-.3303 2.16636-.94722 3.07194-.61692.90552-1.49202 1.60422-2.51142 2.00502-1.0194.40074-2.13576.4851-3.20375999.24198-1.06794-.24318-2.03802-.80244-2.78376-1.60512.91458.64542 2.0067.99096 3.12582.98892 3.01331999 0 5.45783999-2.44098 5.46419999-5.4561V8.74932c1.19874.86808 2.64 1.33674 4.11972 1.33962Zm-8.7162 2.29398c.24618.0018.49188.021.73536.05748v3.02448c-.23838-.07326-.486-.11208-.73536-.11538-.45869999-.0003-.90851999.12624-1.29983999.36564-.39132.23946-.7089.58248-.91758.9912-.20868.40872-.30042.86718-.26502 1.3248.03534.45756.1965.89646.46554 1.26822-.49212-.25932-.88344-.67578-1.1118-1.1832-.22836-.50742-.28068-1.07664-.14856-1.61724.13206-.54054.441-1.02144.87756-1.36614.43662-.34476.97584-.53352 1.53204-.53634.24798-.0072.49578.02184.73541999.08616v-2.29968Zm5.45268-6.335754c-.00036.994452.36114 1.95501 1.01694 2.702214-.46932-.30378-.87186-.700032-1.18302-1.164624-.31122-.464598-.52452-.987768-.62694-1.53759Z" />
+      <path fill="#FFFFFF" d="M14.9309259 14.7918V8.74926c1.2024.86316 2.6457 1.32576 4.12542 1.32234V7.77192c-.8742-.18474-1.66464-.64884-2.25228-1.32234-.46932-.30378-.87186-.700032-1.18302-1.164624-.31122-.464598-.52452-.987768-.62694-1.53759h-2.17176V15.64866c-.02118.51804-.20304 1.01658-.52044 1.42644-.31734.40986-.75444.71058-1.25046.8604-.49602.14982-1.02642.14136-1.51739999-.0243-.49098-.16566-.91824-.48024-1.22232-.90006-.49218-.2592-.88362-.67572-1.11204-1.18314-.22842-.50748-.28074-1.07676-.14862-1.61736.13206-.54066.441-1.02156.87768-1.36632.43668-.3447.97602-.53346 1.53222-.53622.24942.00222.49722.04098.73541999.11502v-2.2998c-1.05683999.01794-2.08565999.3432-2.96099999.93606-.87534.59292-1.559364 1.42782-1.968678 2.403-.409314.97518-.52623 2.0484-.336492 3.08892.189732 1.04046.677922 2.00328 1.40505 2.77092.92352.62412 2.01726.94746 3.13146.92568 3.01331999 0 5.45783999-2.44098 5.46419999-5.4561Z" />
+    </symbol>
+    <symbol id="fs-tt-play" viewBox="0 0 24 24">
+      <path fill="currentColor" d="m17.6343 12.3179-8.09645 5.3976c-.05752.0383-.12434.0602-.19335.0635-.06901.0033-.13762-.0121-.19853-.0447-.06091-.0327-.11183-.0812-.14734-.1404-.03551-.0593-.05429-.1271-.05432-.1962V6.60245c.00003-.06909.01881-.13687.05432-.19613.03551-.05926.08643-.10778.14734-.14039.06091-.03261.12952-.04809.19853-.04479.06901.0033.13583.02526.19335.06353l8.09645 5.39763c.0523.0349.0952.0821.1249.1376.0296.0554.0452.1173.0452.1802s-.0156.1248-.0452.1802c-.0297.0554-.0726.1027-.1249.1376Z" />
+    </symbol>
+    <symbol id="fs-tt-heart" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M15.4375 5.125c2.3207 0 4.2014 1.90972 4.2014 4.58333 0 5.34727-5.7292 8.40277-7.6389 9.54857-1.9097-1.1458-7.63889-4.2013-7.63889-9.54857 0-2.67361 1.90973-4.58333 4.20139-4.58333 1.42084 0 2.6736.76389 3.4375 1.52778.7639-.76389 2.0167-1.52778 3.4375-1.52778Z" />
+    </symbol>
+    <symbol id="fs-tt-share" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12.7639 13.5278h-1.5278c-1.25307-.0005-2.48245.3415-3.55522.9891-1.07277.6476-1.94813 1.5761-2.53143 2.6852-.0164-.2059-.02455-.4123-.02445-.6188 0-4.2189 3.41993-7.63886 7.6389-7.63886V5.125l7.6389 6.1111-7.6389 6.1111v-3.8194Z" />
+    </symbol>
+  </svg>
 
 </section>
 
 <style>
-  .fs-tt { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  .fs-tt {
+    /* Design tokens — change these to restyle the whole feed */
+    --fs-text-inverse: #ffffff;
+    --fs-border-secondary: #ebebeb;
+    --fs-badge-background: rgba(8, 8, 11, 0.4);
 
-  .fs-tt__header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-  .fs-tt__avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
-  .fs-tt__name { margin: 0; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-  .fs-tt__verified { flex: none; }
-  .fs-tt__profile { font-size: 0.875rem; opacity: 0.6; text-decoration: none; }
-  .fs-tt__profile:hover { text-decoration: underline; }
+    --fs-tt-columns: 4;
+    --fs-tt-gap: 16px;
+    --fs-tt-radius: 8px;
+    --fs-tt-ratio: 9 / 16;
 
-  .fs-tt__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-
-  .fs-tt__card { position: relative; display: flex; flex-direction: column; gap: 8px; }
-
-  .fs-tt__media-wrap { position: relative; border-radius: 12px; overflow: hidden; }
-  .fs-tt__media { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
-
-  .fs-tt__views {
-    position: absolute;
-    left: 8px;
-    bottom: 8px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 16px;
+    font-family: inherit;
   }
 
-  .fs-tt__title {
-    margin: 0;
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  .fs-tt *,
+  .fs-tt *::before,
+  .fs-tt *::after { box-sizing: border-box; }
+
+  .fs-tt__sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  .fs-tt__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--fs-tt-columns), 1fr);
+    gap: var(--fs-tt-gap);
+  }
+
+  .fs-tt__card {
+    position: relative;
+    display: flex;
+    aspect-ratio: var(--fs-tt-ratio);
     overflow: hidden;
+    border-radius: var(--fs-tt-radius);
+    background: var(--fs-border-secondary);
+    color: var(--fs-text-inverse);
+    text-decoration: none;
   }
 
-  .fs-tt__link { position: absolute; inset: 0; }
-  .fs-tt__link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 12px; }
+  .fs-tt__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
 
-  @media (max-width: 900px) { .fs-tt__grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 560px) { .fs-tt__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+  .fs-tt__logo {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+  }
+
+  .fs-tt__badges {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .fs-tt__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 28px;
+    padding: 2px 8px 2px 4px;
+    border-radius: 4px;
+    background: var(--fs-badge-background);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    font-size: 14px;
+    line-height: 24px;
+    white-space: nowrap;
+  }
+  .fs-tt__badge svg { width: 24px; height: 24px; }
+  /* FeedSpring leaves a count blank when it is 0 — hide the empty badge */
+  .fs-tt__badge:has(> [feed-field]:empty) { display: none; }
+
+  /* Hover and keyboard focus zoom the thumbnail */
+  .fs-tt__card:hover .fs-tt__image,
+  .fs-tt__card:focus-visible .fs-tt__image { transform: scale(1.1); }
+  .fs-tt__card:focus-visible { outline: 3px solid #25f4ee; outline-offset: 2px; }
+
+  @media (max-width: 900px) {
+    .fs-tt { --fs-tt-columns: 3; }
+  }
+
+  @media (max-width: 640px) {
+    .fs-tt { --fs-tt-columns: 2; --fs-tt-gap: 8px; }
+    .fs-tt__logo { top: 10px; left: 10px; width: 28px; height: 28px; }
+    .fs-tt__badges { gap: 4px; padding: 8px; }
+    .fs-tt__badge { height: 20px; padding: 2px 6px 2px 2px; font-size: 12px; line-height: 16px; }
+    .fs-tt__badge svg { width: 16px; height: 16px; }
+    .fs-tt__badge--share { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fs-tt__image { transition: none; }
+    .fs-tt__card:hover .fs-tt__image,
+    .fs-tt__card:focus-visible .fs-tt__image { transform: none; }
+  }
 </style>

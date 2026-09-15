@@ -80,6 +80,8 @@ When the user later sends their own Feed ID, swap it in, remove the comment, and
 
 The Google Reviews placeholder feed currently contains only 5-star reviews, so `star-inactive` elements won't render against it. That's expected — don't treat it as a markup bug, and keep the `star-inactive` element in place.
 
+**Known issue — Google Reviews stars with `render:dynamic`.** The current Google Reviews script multiplies the stars on every review after the first when dynamic rendering is used. Until that is fixed, build Google Reviews feeds with static rendering: repeat the post template once per review you want to show, and omit `render:dynamic`. The Google Reviews template already does this.
+
 If the user explicitly asks for a static design with no live data, or there's no network access, use **Static mockup mode** below instead.
 
 ## Step 3 — Build
@@ -99,7 +101,7 @@ For anything beyond the basic pattern below, read the relevant reference:
 | Source | Template |
 |---|---|
 | Instagram | `assets/templates/instagram-grid.html` |
-| Google Reviews | `assets/templates/google-reviews-carousel.html` |
+| Google Reviews | `assets/templates/google-reviews-grid.html` |
 | TikTok | `assets/templates/tiktok-grid.html` |
 | Dribbble | `assets/templates/dribbble-portfolio.html` |
 
