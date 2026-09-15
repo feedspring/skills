@@ -44,9 +44,9 @@ Do this before writing any code. Ask what the user is building in if you don't k
 
 ## Step 2 — Get a Feed ID
 
-Ask before writing live-feed code:
+Always ask for the user's own Feed ID before writing code. Their own ID is the goal — it shows their real content and means the code is ready to publish.
 
-> Do you already have a FeedSpring Feed ID? If yes, send it through and I'll wire the feed to live data. If not, I can build it against a FeedSpring demo feed so you can see it working, then you swap in your own ID.
+> Do you have a FeedSpring Feed ID? Send it through and I'll connect the feed to your content. If you don't have one yet, I'll use a placeholder Feed ID with placeholder content so you can see the layout working, and you can swap in your own ID when you're ready.
 
 Feed IDs are public and safe to put in browser code. Each starts with a source prefix:
 
@@ -59,29 +59,28 @@ Feed IDs are public and safe to put in browser code. Each starts with a source p
 
 **Always check the prefix matches the script and the field names you're using.** A `google_` ID with the Instagram script renders nothing, silently.
 
-### Demo feeds
+### Placeholder Feed IDs
 
-Use these when the user has no Feed ID yet. They are real, live FeedSpring feeds, so the layout renders with real content and any mistakes in the markup show up immediately.
+Use these only when the user doesn't have their own Feed ID yet. They are live feeds, so the layout renders with real posts and any mistakes in the markup show up immediately.
 
-| Source | Demo Feed ID | What the user will see |
-|---|---|---|
-| Instagram | `inst_55ZVUQExmdej0j8vygUoP` | Photography posts from the Unsplash Instagram account |
-| Google Reviews | `google_1nCNRAgOgIYoTG3fhUX4c` | Five 5-star reviews of a business called "FeedSpring Team" |
-| TikTok | `tiktok_7ZTDgAmbdnLstuHJ2srlq` | A FeedSpring profile with videos captioned "Just a demo TikTok for FeedSpring" |
-| Dribbble | `dribbble_3qm4sGbu4uWQI2asUboPC` | A "Sam Smith" demo profile with shots credited to other designers |
+| Source | Placeholder Feed ID |
+|---|---|
+| Instagram | `inst_55ZVUQExmdej0j8vygUoP` |
+| Google Reviews | `google_1nCNRAgOgIYoTG3fhUX4c` |
+| TikTok | `tiktok_7ZTDgAmbdnLstuHJ2srlq` |
+| Dribbble | `dribbble_3qm4sGbu4uWQI2asUboPC` |
 
-Tell the user what they'll see, so they don't mistake demo content for their own or think the feed is broken.
+When you use a placeholder Feed ID you **must**:
 
-The Google Reviews demo only contains 5-star reviews, so `star-inactive` elements will never render against it. That is expected — don't treat missing inactive stars as a markup bug, and don't remove the `star-inactive` element.
+1. Tell the user, in your reply, that the feed is using a placeholder Feed ID and showing placeholder content, and that they should replace it with their own Feed ID before publishing.
+2. Leave an HTML comment directly above the wrapper: `<!-- Placeholder Feed ID — replace with your own FeedSpring Feed ID before publishing -->`
+3. Never present placeholder content as the user's own.
 
-When you use a demo feed you **must**:
+When the user later sends their own Feed ID, swap it in, remove the comment, and confirm the prefix still matches the script.
 
-1. Leave an HTML comment directly above the wrapper: `<!-- FeedSpring demo feed — replace with your own Feed ID before publishing -->`
-2. Tell the user in your reply, in one sentence, that the feed is showing FeedSpring's demo content and needs swapping before they go live.
+The Google Reviews placeholder feed currently contains only 5-star reviews, so `star-inactive` elements won't render against it. That's expected — don't treat it as a markup bug, and keep the `star-inactive` element in place.
 
-Never present demo content as the user's own data.
-
-If the user explicitly asks for a static mockup, or there's no network access, use **Placeholder mode** below instead.
+If the user explicitly asks for a static design with no live data, or there's no network access, use **Static mockup mode** below instead.
 
 ## Step 3 — Build
 
@@ -117,7 +116,7 @@ One script for the source, in `<head>`:
 A wrapper and one reusable post template:
 
 ```html
-<!-- FeedSpring demo feed — replace with your own Feed ID before publishing -->
+<!-- Placeholder Feed ID — replace with your own FeedSpring Feed ID before publishing -->
 <div feedspring="inst_55ZVUQExmdej0j8vygUoP" feed-options="render:dynamic|limit:6">
   <div feedspring="post">
     <img feed-field="img" alt="" />
@@ -176,15 +175,15 @@ Getting these wrong makes a feed look broken rather than designed:
 - **Dribbble** — shots are 4:3. Respect it.
 - **Google Reviews** — needs both `star` and `star-inactive` elements to render a rating. Review text length varies wildly, so plan for truncation or a flexible card height.
 
-## Placeholder mode
+## Static mockup mode
 
-Use only when the user explicitly asks for a static mockup, or there's no network access.
+Use only when the user explicitly asks for a static design with no live data, or there's no network access. Otherwise prefer a placeholder Feed ID — it shows real content and produces code that's ready to publish.
 
-- Do not include `feed-field` attributes in placeholder cards.
+- Do not include `feed-field` attributes in mockup cards.
 - Duplicate 4 to 6 cards so the layout can be judged realistically.
 - Use realistic static text for captions, reviews, names, dates and counts — varied lengths, not lorem ipsum of uniform size.
 - Use skeleton blocks for images and avatars to avoid broken image icons.
-- Add a visible banner saying this is placeholder content.
+- Add a visible banner saying this is a static mockup.
 
 ```html
 <style>
@@ -201,12 +200,12 @@ Use only when the user explicitly asks for a static mockup, or there's no networ
 </style>
 
 <div class="fs-preview-banner">
-  <strong>Preview mode</strong> — this feed is showing placeholder content.
-  Add your FeedSpring Feed ID to display live data.
+  <strong>Static mockup</strong> — this is not connected to a feed.
+  Add your FeedSpring Feed ID to display live content.
 </div>
 ```
 
-When the user provides a Feed ID: replace placeholder content with live `feed-field` attributes, collapse to one template with `render:dynamic`, and remove the banner.
+When the user provides a Feed ID: replace the static content with live `feed-field` attributes, collapse to one template with `render:dynamic`, and remove the banner.
 
 ## Verify before you finish
 
@@ -221,7 +220,7 @@ Run through this after generating code, every time. Most FeedSpring support issu
 - [ ] TikTok `feed-field="video"` is on an `<iframe>`.
 - [ ] With `render:dynamic`, there is exactly **one** post template.
 - [ ] Profile fields sit outside the post template, post fields inside it.
-- [ ] If a demo feed was used, the replace-before-publishing comment is present and mentioned in the reply.
+- [ ] If a placeholder Feed ID was used, the replace-before-publishing comment is present, and the reply tells the user it's placeholder content.
 - [ ] The layout respects the source's aspect ratio.
 
 ## Platform notes
