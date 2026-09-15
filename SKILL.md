@@ -63,14 +63,16 @@ Feed IDs are public and safe to put in browser code. Each starts with a source p
 
 Use these when the user has no Feed ID yet. They are real, live FeedSpring feeds, so the layout renders with real content and any mistakes in the markup show up immediately.
 
-| Source | Demo Feed ID |
-|---|---|
-| Instagram | `inst_55ZVUQExmdej0j8vygUoP` |
-| Google Reviews | `TODO — awaiting demo feed ID` |
-| TikTok | `TODO — awaiting demo feed ID` |
-| Dribbble | `TODO — awaiting demo feed ID` |
+| Source | Demo Feed ID | What the user will see |
+|---|---|---|
+| Instagram | `inst_55ZVUQExmdej0j8vygUoP` | Photography posts from the Unsplash Instagram account |
+| Google Reviews | `google_1nCNRAgOgIYoTG3fhUX4c` | Five 5-star reviews of a business called "FeedSpring Team" |
+| TikTok | `tiktok_7ZTDgAmbdnLstuHJ2srlq` | A FeedSpring profile with videos captioned "Just a demo TikTok for FeedSpring" |
+| Dribbble | `dribbble_3qm4sGbu4uWQI2asUboPC` | A "Sam Smith" demo profile with shots credited to other designers |
 
-Demo feed content identifies itself as FeedSpring demo content, so a site accidentally published with one is obvious rather than silently wrong. Mention that to the user — it reassures them the content isn't meant to be theirs.
+Tell the user what they'll see, so they don't mistake demo content for their own or think the feed is broken.
+
+The Google Reviews demo only contains 5-star reviews, so `star-inactive` elements will never render against it. That is expected — don't treat missing inactive stars as a markup bug, and don't remove the `star-inactive` element.
 
 When you use a demo feed you **must**:
 
@@ -79,7 +81,7 @@ When you use a demo feed you **must**:
 
 Never present demo content as the user's own data.
 
-If a demo feed isn't available for the source, or the user explicitly asks for a static mockup, use **Placeholder mode** below instead.
+If the user explicitly asks for a static mockup, or there's no network access, use **Placeholder mode** below instead.
 
 ## Step 3 — Build
 
@@ -176,7 +178,7 @@ Getting these wrong makes a feed look broken rather than designed:
 
 ## Placeholder mode
 
-Use only when no demo feed is available for the source, the user explicitly asks for a static mockup, or there's no network access.
+Use only when the user explicitly asks for a static mockup, or there's no network access.
 
 - Do not include `feed-field` attributes in placeholder cards.
 - Duplicate 4 to 6 cards so the layout can be judged realistically.
